@@ -149,27 +149,28 @@ node index.js
 
 #### Way-2: Automatically restart server on changes:
 
-Install nodemon globally: 
+Install nodemon globally:
+
 ```bash
 npm install -g nodemon
 ```
+
 - Installs nodemon system-wide.
 - Not tied to any specific project.
 - Doesn't appear in package.json.
 - You can run nodemon from anywhere in the terminal.
 
-
-OR 
+OR
 
 Install nodemon locally (--save-dev flag):
+
 ```bash
 npm i -D nodemon (or npm install --save-dev nodemon)
 ```
+
 - Installs nodemon only for the current project.
 - Gets added under devDependencies in package.json; as only needed during development, not in production.
 - To run it, you must use npx nodemon or configure it in package.json.
-
-
 
 Update package.json → Add this inside the "scripts" section:
 
@@ -184,3 +185,40 @@ Run the server with:
 ```bash
 npm start
 ```
+
+## Creating View
+
+The first step is to create a folder structure for our MVC project. We'll have separate
+folders for our models, views, and controllers. Here are the steps to create a basic
+MVC application folder structure:
+
+1. Create a new folder for your project and name inventory-management-app. This will be
+   the root directory of your project.
+2. Inside the root directory, create a new file called index.js. This will be the
+   entry point for your application and will contain the server code.
+3. Inside the root directory, create a new folder called `src`. This will be the main
+   source directory for your project.
+4. Inside the src directory, create three new folders called `models`, `views`, and
+   `controllers`. These will be the main components of your MVC architecture.
+5. Inside the views directory, create a new file called `products.html`. This will be
+   the products page for your web application.
+6. Inside the views directory, create a new file called `products.css`. This will be
+   the stylesheet for your web application.
+   <img src="./images/create_view.png" alt="Create View" width="300" height="400">
+7. In index.js, you will need to import and use the Express framework to handle
+HTTP requests and serve your HTML and CSS files. Here's a basic example
+of how to do this:
+```javascript
+import express from "express";
+import path from "path";
+const server = express();
+server.use(express.static("src/views"));
+server.get("/", (req, res) => {
+  res.sendFile(
+    path.join(path.resolve(), "src", "views", "products.html")
+  );
+});
+server.listen(3000);
+```
+Here we were sending html file directly, next we will use controller as an
+intermediate.
