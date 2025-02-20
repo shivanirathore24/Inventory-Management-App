@@ -454,6 +454,88 @@ data could be tracking the last visited products by a user.
 7. For example, you can store the IDs or details of the last explored products in the
 user's session data.
 
+## Creating Cookie
+In the inventory management project, cookies will be used to store the last visit date and
+time of the user.
+To handle cookies in the project, the `cookie-parser` package will be used. It can be
+installed using the command:
+```sh
+npm i cookie-parser.
+```
+1. In the 'index.js' file, import the cookie-parser package to use it in the project:
+```javascript
+import cookieParser from 'cookie-parser';
+```
+2. For every request made by the user, the last visited time will be updated. This
+functionality will be implemented using a middleware called setLastVisit, which will
+be defined in the 'lastVisit.middleware.js' file within the middlewares folder.
+```javascript
+export const setLastVisit = (req, res, next) => {
+  // 1. if cookie is set, then add a local variable with last visit time data.
+  if (req.cookies.lastVisit) {
+    res.locals.lastVisit = new Date(req.cookies.lastVisit).toLocaleString();
+  }
+  res.cookie("lastVisit", new Date().toISOString(), {
+    maxAge: 2 * 24 * 60 * 60 * 1000,
+  });
+  next();
+};
+```
+The logic for the setLastVisit middleware is as follows:
+- If the `lastVisit` cookie is set, retrieve its value and add a local variable lastVisit
+with the formatted date and time.
+- Set the `lastVisit` cookie with the current date and time using res.cookie
+- The maxAge option in `res.cookie` specifies the maximum age of the cookie in
+milliseconds. In this case, it is set to 2 days.
+- Finally, call the next function to continue processing the request.
+
+3. Conditional rendering will be added to show the last visited time only if it is
+available. The changes will be made in the 'index.ejs' file.
+In the 'index.ejs' file, add the following code snippet to display the last visited time:
+```html
+<% if(locals.lastVisit){ %>
+  <div class="alert alert-primary" role="alert">
+    Your Last Visit was on : <%= locals.lastVisit %>
+  </div>
+<% } %>
+```
+
+4. In the 'index.js' file, the two middlewares (cookieParser and setLastVisit) will be used
+to handle cookies and set the last visit time for each request.
+Include the following code in index.js:
+```javascript
+app.use(cookieParser());
+app.use(setLastVisit);
+```
+5. View of the application:
+
+<img src="./images/products_lastVisit.png" alt="Last Visit on Products" width="550" height="auto">
+
+6. To see the cookies stored on the client in our application, we can follow these steps:
+  - Open the web browser and navigate to the URL where the application is
+running.
+  - Right-click on the page and select "Inspect" or "Inspect Element" from the
+context menu. This will open the browser's developer tools.
+  - In the developer tools, locate the "Application" tab. Click on it to switch to the
+Application panel.
+  - In the left sidebar of the Application panel, expand the "Cookies" section.
+Here, you will find a list of cookies associated with the current URL.
+  - Look for the specific cookie you want to inspect, such as "lastVisit".
+
+By clicking on the cookie, you can see its details, including its name, value, domain, path,
+expiration date, and other attributes.
+<img src="./images/cookies_application_tab.png" alt="Cookies in Application tab" width="650" height="auto">
+
+Additionally, you can inspect cookies in the 'Network tab' of the developer tools.
+In the 'request headers' section, look for the "Cookie" header. It contains the cookies sent
+by the client to the server.
+<img src="./images/cookies_request_header.png" alt="Cookies in Request Header" width="650" height="auto">
+In the 'response headers' section, you can find the "Set-Cookie" header, which includes any
+new or updated cookies sent by the server to the client.
+<img src="./images/cookies_response_header.png" alt="Cookies in Response Header" width="650" height="auto">
+
+
+
 
 
 
